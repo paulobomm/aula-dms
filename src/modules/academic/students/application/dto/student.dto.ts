@@ -2,6 +2,7 @@ import type { Student } from "@academic/students/domain/models/student.entity";
 
 export class StudentDto {
   private constructor(
+    public id: string | undefined,
     public name: string,
     public email: string,
     public document: string,
@@ -11,6 +12,7 @@ export class StudentDto {
   public static from(student: Student | null): StudentDto | null {
     if (!student) return null;
     return new StudentDto(
+      student.id,
       student.name,
       student.email,
       student.document,

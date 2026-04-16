@@ -8,6 +8,7 @@ import {
   type ClassOfferingRepository,
 } from "@class-offering/domain/repositories/class-offering-repository.interface";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import type { PaginatedResult } from "@shared/hateoas/hateoas.types";
 
 @Injectable()
 export class ClassOfferingService {
@@ -33,9 +34,17 @@ export class ClassOfferingService {
     await this.classOfferingRepository.create(classOffering!);
   }
 
-  async list(): Promise<ClassOfferingDto[]> {
-    const response = await this.classOfferingRepository.findAll();
-    return response.map((row) => ClassOfferingDto.from(row)!);
+  async list(
+    page = 1,
+    limit = 10,
+  ): Promise<PaginatedResult<ClassOfferingDto>> {
+    const all = await this.classOfferingRepository.findAll();
+    const total = all.length;
+    const totalPages = Math.ceil(total / limit);
+    const items = all
+      .slice((page - 1) * limit, page * limit)
+      .map((row) => ClassOfferingDto.from(row)!);
+    return { items, total, page, limit, totalPages };
   }
 
   async findById(id: string): Promise<ClassOfferingDto | null> {

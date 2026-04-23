@@ -14,6 +14,6 @@ export class ListStudentsService {
 
   async execute(): Promise<StudentDto[]> {
     const response = await this.studentRepository.findAll();
-    return response.map((row) => StudentDto.fromStudent(row)!);
+    return response.map((row) => StudentDto.from(row)!);
   }
 }

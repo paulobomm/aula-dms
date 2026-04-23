@@ -10,6 +10,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import type { PaginatedResult } from "@shared/hateoas/hateoas.types";
 
 @Injectable()
 export class TeacherService {
@@ -59,9 +60,17 @@ export class TeacherService {
     await this.teacherRepository.delete(id);
   }
 
-  async list(): Promise<TeacherDto[]> {
-    const response = await this.teacherRepository.findAll();
-    return response.map((row) => TeacherDto.from(row)!);
+  async list(
+    page = 1,
+    limit = 10,
+  ): Promise<PaginatedResult<TeacherDto>> {
+    const all = await this.teacherRepository.findAll();
+    const total = all.length;
+    const totalPages = Math.ceil(total / limit);
+    const items = all
+      .slice((page - 1) * limit, page * limit)
+      .map((row) => TeacherDto.from(row)!);
+    return { items, total, page, limit, totalPages };
   }
 
   async findById(id: string): Promise<TeacherDto | null> {

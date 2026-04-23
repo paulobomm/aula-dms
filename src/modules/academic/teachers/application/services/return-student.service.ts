@@ -14,11 +14,11 @@ export class ReturnStudentService {
 
   async executeById(id: string): Promise<StudentDto | null> {
     const response = await this.studentRepository.findById(id);
-    return StudentDto.fromStudent(response);
+    return StudentDto.from(response);
   }
 
   async executeByEmail(email: string): Promise<StudentDto | null> {
     const response = await this.studentRepository.findByEmail(email);
-    return StudentDto.fromStudent(response);
+    return StudentDto.from(response);
   }
 }
